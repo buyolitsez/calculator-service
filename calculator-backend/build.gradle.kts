@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.0")
+    implementation("org.jetbrains.kotlin:kotlin-build-tools-impl:2.0.20")
     testImplementation(kotlin("test"))
 }
 
