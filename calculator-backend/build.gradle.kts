@@ -34,6 +34,7 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock:2.3.12")
     testImplementation("io.ktor:ktor-server-test-host:2.3.12")
 
+    implementation("org.jetbrains.kotlin:kotlin-build-tools-impl:2.0.20")
     testImplementation(kotlin("test"))
 }
 
