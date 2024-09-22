@@ -12,6 +12,9 @@ class TimeoutError(override val message: String) : Error
 sealed class ParsingError : Error
 
 @Serializable
+class InvalidInputError(override val message: String) : ParsingError()
+
+@Serializable
 class FileOpenError(override val message: String) : Error
 
 sealed class EvaluationError : Error

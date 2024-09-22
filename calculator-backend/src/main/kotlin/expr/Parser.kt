@@ -1,8 +1,10 @@
 package com.github.heheteam.expr
 
+import com.github.heheteam.InvalidInputError
 import com.github.heheteam.ParsingError
 import com.github.michaelbull.result.*
 import java.util.ArrayDeque
+import java.util.Stack
 
 val OPERATION_TO_NODE = mapOf(
     "+" to ::Add,
@@ -12,7 +14,7 @@ val OPERATION_TO_NODE = mapOf(
 )
 
 const val DIGITS = "0123456789"
-const val CALC_SYMBOLS = "()+-*/"
+const val CALC_SYMBOLS = "+-*/"
 
 fun StringBuilder.pop(): String {
     val chr = this.first()
@@ -20,80 +22,151 @@ fun StringBuilder.pop(): String {
     return chr.toString()
 }
 
-fun getTokens(input: StringBuilder): ArrayDeque<String> {
+data class Token(val value: String, val index: Int = 0)
 
-    val tokens = ArrayDeque<String>()
-    val number = StringBuilder()
+fun getTokens(input: StringBuilder): ArrayDeque<Token> {
+
+    if (input.isEmpty())
+        throw IllegalStateException("empty expression")
+
+    if (input.first() in "*/")
+        throw IllegalStateException("unary operator must be '-' or '+'")
+
+    while (input.last() in CALC_SYMBOLS)
+        input.deleteCharAt(input.lastIndex)
+
+    val tokens = ArrayDeque<Token>()
+    val opening_paranthesis_current_positions = Stack<Int>()
+    var index = 0
+    var balance = 0
+    var numbers = 0
+
+    if (input.first() in "+-")
+        tokens.addLast(Token(input.pop(), ++index))
 
     while (input.isNotEmpty()) {
         when (input.first()) {
 
+            '(' -> {
+                tokens.addLast(Token(input.pop(), ++index))
+                opening_paranthesis_current_positions.push(index).also { ++balance }
+            }
+
+            ')' -> {
+                index += 1
+
+                balance -= 1
+                if (balance < 0)
+                    throw IllegalStateException("extra closing parenthesis at position $index")
+
+                if (index - opening_paranthesis_current_positions.peek() == 1) {
+                    opening_paranthesis_current_positions.pop()
+                    tokens.removeLast()
+                    input.deleteCharAt(0)
+                    continue
+                }
+
+                tokens.addLast(Token(input.pop(), index))
+                opening_paranthesis_current_positions.pop()
+            }
+
             in CALC_SYMBOLS -> {
-                tokens.addLast(input.pop())
+                if (tokens.last.value in CALC_SYMBOLS)
+                    throw IllegalStateException("two following operations at $index")
+
+                if (tokens.last.value == "(" && input.first() in "*/")
+                    throw IllegalStateException("unary operator must be '-' or '+'")
+
+                tokens.addLast(Token(input.pop(), ++index))
             }
 
             in DIGITS -> {
+                val integer = StringBuilder()
+                val fractional = StringBuilder()
+
                 while (input.isNotEmpty() && input.first().isDigit())
-                    number.append(input.pop())
-                tokens.addLast(number.toString())
-                number.clear()
+                    integer.append(input.pop()).also { ++index }
+
+                if (input.isNotEmpty() && input.first() == '.') {
+                    fractional.append(input.pop()).also { ++index }
+
+                    while (input.isNotEmpty() && input.first().isDigit())
+                        fractional.append(input.pop()).also { ++index }
+
+                    if (fractional.length == 1)
+                        throw IllegalStateException("unexpected delimiter at position $index")
+                }
+                tokens.addLast(Token(integer.append(fractional).toString())).also { ++numbers }
             }
 
-            else -> throw IllegalArgumentException("invalid symbol occurred")
+            else -> throw IllegalStateException("invalid symbol at position ${index + 1}")
         }
     }
 
+    if (numbers == 0)
+        throw IllegalStateException("empty expression (expression must contain at least one number)")
+
+    if (opening_paranthesis_current_positions.isNotEmpty()) {
+        throw IllegalStateException("opening parenthesis at position ${opening_paranthesis_current_positions.first()} was never closed")
+    }
     return tokens
 }
 
-class Parser(private val tokens: ArrayDeque<String>) {
+class Parser(private val tokens: ArrayDeque<Token>) {
 
     fun parse(): Ast {
+        if (tokens.size == 1)
+            return Numeric(tokens.first.value.toDouble())
         return parseAddSub()
     }
 
     private fun parseAddSub(): Ast {
         var node = parseMulDiv()
 
-        while (tokens.isNotEmpty() && (tokens.first == "+" || tokens.first == "-")) {
+        while (tokens.isNotEmpty() && (tokens.first.value == "+" || tokens.first.value == "-")) {
             val operation = tokens.removeFirst()
-            node = OPERATION_TO_NODE[operation]!!(node, parseMulDiv())
+            node = OPERATION_TO_NODE[operation.value]!!(node, parseMulDiv())
         }
-
         return node
     }
 
     private fun parseMulDiv(): Ast {
         var node = parseParenthesis()
 
-        while (tokens.isNotEmpty() && (tokens.first == "*" || tokens.first == "/")) {
+        while (tokens.isNotEmpty() && (tokens.first.value == "*" || tokens.first.value == "/")) {
             val operation = tokens.removeFirst()
-            node = OPERATION_TO_NODE[operation]!!(node, parseParenthesis())
+            node = OPERATION_TO_NODE[operation.value]!!(node, parseParenthesis())
         }
-
         return node
     }
 
     private fun parseParenthesis(): Ast {
         val token = tokens.removeFirst()
 
-        if (token == "(") {
+        if (token.value == "(") {
             val node = parseAddSub()
-            tokens.removeFirst() // TODO handle missing ')'
+            tokens.removeFirst()
             return node
         }
 
-        return Numeric(token.toDouble())
+        if (token.value == "-")
+            return Numeric(tokens.removeFirst().value.toDouble(), true)
+        if (token.value == "+")
+            return Numeric(tokens.removeFirst().value.toDouble())
+        return Numeric(token.value.toDouble())
     }
 }
 
 fun parseExpr(input: String): Result<Ast, ParsingError> {
-    val tokens = getTokens( // TODO handle exceptions
-        StringBuilder(
-            input.replace(" ", "")
+    try {
+        val tokens = getTokens(
+            StringBuilder(
+                input.replace(" ", "")
+            )
         )
-    )
-
-    val parser = Parser(tokens)
-    return Ok(parser.parse())
+        val parsed = Parser(tokens).parse()
+        return Ok(parsed)
+    } catch (exception: IllegalStateException) {
+        return Err(InvalidInputError(exception.message ?: "parsing error"))
+    }
 }
