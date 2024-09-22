@@ -13,7 +13,7 @@ const val request = "/calculator"
 fun Application.configureRouting() {
 
     install(ContentNegotiation) {
-        json() // TODO for exceptions?
+        json()
     }
 
     routing {
@@ -21,14 +21,21 @@ fun Application.configureRouting() {
         post (request) {
             val expr = call.receiveText()
 
-            if (expr.isEmpty()) {
-                call.respond(HttpStatusCode.BadRequest)
+            val ast = parseExpr(expr)
+
+            if (ast.isErr) {
+                call.respond(HttpStatusCode.BadRequest, ast.error)
                 return@post
             }
 
-            val ast = parseExpr(expr).value // TODO handle exceptions
+            val result = ast.value.eval()
 
-            call.respond(ast.eval().value)
+            if (result.isErr) {
+                call.respond(HttpStatusCode.BadRequest, result.error)
+                return@post
+            }
+
+            call.respond(result.value)
         }
     }
 }
