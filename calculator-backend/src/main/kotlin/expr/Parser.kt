@@ -163,10 +163,5 @@ fun parseExpr(input: String): Result<Ast, ParsingError> {
             input.replace(" ", "")
         )
     )
-
-    if (tokens.isErr)
-        return Err(tokens.error)
-
-    val parsed = Parser(tokens.value).parse()
-    return Ok(parsed)
+    return tokens.map { Parser(it).parse() }
 }
