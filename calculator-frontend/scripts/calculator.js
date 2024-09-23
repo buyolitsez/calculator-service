@@ -38,7 +38,7 @@ input.addEventListener('keydown', function (event) {
         return;
     }
 
-    if(key === ","){
+    if (key === ",") {
         key = '.'
     }
 
@@ -80,8 +80,13 @@ function postExpression() {
             return
         }
         resultField.classList.remove("has-text-danger")
-        const result = await response.text()
-        resultField.innerText = "Result: " + result
+        let result = parseFloat(await response.text());
+        if (Math.abs(result - Math.round(result)) < 1e-9) {
+            result = Math.round(result)
+        } else {
+            result = result.toFixed(8) * 1
+        }
+        resultField.innerText = "Result: " + result.toString()
         addToHistoryTable(input.value, result)
     })
 }

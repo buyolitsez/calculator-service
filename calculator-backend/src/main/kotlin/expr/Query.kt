@@ -3,19 +3,16 @@ package com.github.heheteam.expr
 import com.github.heheteam.Database
 import com.github.heheteam.Entry
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.routing.*
-import io.ktor.server.response.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.http.content.*
 import io.ktor.server.request.*
-import java.io.File
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import java.nio.file.Path
 
 const val computationRequest = "/calculator"
 const val historyRequest = "/history"
-const val pathToResources = "calculator-frontend/"
 lateinit var database: Database
 
 fun Application.configureRouting(
