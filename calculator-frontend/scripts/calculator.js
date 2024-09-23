@@ -49,11 +49,15 @@ input.addEventListener('keydown', function (event) {
         typeDelete()
     }
 
-    if (key === "\n") {
+    if (key === "enter") {
         event.preventDefault()
         postExpression()
     }
 })
+
+function unwrapError(json) {
+    return JSON.parse(json).message
+}
 
 function postExpression() {
     resultField.innerText = "******"
@@ -61,22 +65,20 @@ function postExpression() {
     fetch("/calculator", {
         method: 'POST',
         headers: {
-            'Content-Type': 'text;charset=utf-8'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({"expression": input.value})
-    }).then((response) => {
+    }).then(async (response) => {
         resultField.classList.remove("has-skeleton")
         if (!response.ok) {
-            resultField.innerText = "Result:"
-            return null
+            resultField.classList.add("has-text-danger")
+            resultField.innerText = "Error: " + unwrapError(await response.text())
+            return
         }
-        return response.text()
-    }).then(async (text) => {
-        // TODO: handle expression evaluation errors
-        resultField.innerText += " " + await text
-
-        // call it only when expression is correct!
-        addToHistoryTable(input.value, resultField.innerText)
+        resultField.classList.remove("has-text-danger")
+        const result = await response.text()
+        resultField.innerText = "Result: " + result
+        addToHistoryTable(input.value, result)
     })
 }
 

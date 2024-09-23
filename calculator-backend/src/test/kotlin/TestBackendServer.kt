@@ -1,7 +1,7 @@
 package com.example.calculator.test
 
 import com.github.heheteam.expr.parseExpr
-import com.github.heheteam.expr.request
+import com.github.heheteam.expr.computationRequest
 import com.github.heheteam.module
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -23,7 +23,7 @@ class BackendServerTest {
     fun expressionParsingSpacesTest() {
         var parsed = parseExpr("100 + 200 - 100 * 2")
         assertTrue(parsed.isOk)
-        var result = parsed.value.eval()
+        val result = parsed.value.eval()
         assertTrue(result.isOk)
         assertTrue(abs(100.0 - result.value) < 1e-6)
 
@@ -114,12 +114,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("(5-1)*4+(2/2-1)")
+            setBody("{\"expression\": \"(5-1)*4+(2/2-1)\"}")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -132,12 +132,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("5*5*5")
+            setBody("{\"expression\": \"5*5*5\"}")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -150,12 +150,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("2+ ( 2+ (2+( 2+ 2)- 3) - 3) -  3")
+            setBody("{\"expression\": \"2+ ( 2+ (2+( 2+ 2)- 3) - 3) -  3\"}")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -168,12 +168,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("8-3")
+            setBody("{\"expression\": \"8-3\"}")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -186,12 +186,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("99.25*3-(101.3*5-(71*2.2-(10*4-5.5))+60)-11")
+            setBody("{\"expression\": \"99.25*3-(101.3*5-(71*2.2-(10*4-5.5))+60)-11\"}")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -204,12 +204,12 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(request) {
+        val response = client.post(computationRequest) {
             header(
                 HttpHeaders.ContentType,
-                ContentType.Text.Plain
+                ContentType.Application.Json
             )
-            setBody("100.1 - 5 + 6.. 7 * 9")
+            setBody("{\"expression\": \"100.1 - 5 + 6.. 7 * 9\"}")
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)

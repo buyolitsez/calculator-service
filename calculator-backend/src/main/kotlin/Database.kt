@@ -4,12 +4,14 @@ import com.github.heheteam.expr.Value
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.onFailure
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import kotlin.math.max
 
 data class Entry(val exprString: String, val value: Result<Value, Error>) {
     private fun toEntrySuccess(): EntrySuccess {
@@ -61,7 +63,7 @@ class Database private constructor(private val path: Path, private val allEntrie
     }
 
     fun queryLastEntries(count: Int): List<Entry> {
-        return allEntries.slice(allEntries.size - count..<allEntries.size).map {
+        return allEntries.slice(max(0, allEntries.size - count)..<allEntries.size).map {
             it.toEntry()
         }
     }
@@ -102,6 +104,12 @@ class Database private constructor(private val path: Path, private val allEntrie
                 return Err(FileOpenError("File is not writable"))
             }
             return Ok(Database(path))
+        }
+
+        fun openDatabase(path: Path): Result<Database, FileOpenError> {
+            return tryToFindDatabase(path).onFailure {
+                createEmptyDatabase(path)
+            }
         }
     }
 }

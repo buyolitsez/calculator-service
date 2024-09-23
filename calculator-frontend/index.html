@@ -25,26 +25,7 @@
             <h2 class="title is-4 has-text-centered">History</h2>
             <table class="table is-fullwidth has-text-centered is-family-monospace" id="history">
                 <tbody>
-                <tr>
-                    <td class="is-clickable" onclick="console.log('click')">
-                        <span class="expression">8 + 32 - 74 + 4 * 3 = -22</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="is-clickable" onclick="console.log('click')">
-                        <span class="expression">12 + 32 * 2 - 74 + 4 * 3 = -22</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="is-clickable" onclick="console.log('click')">
-                        <span class="expression">8 + 32 - 74 + 4 * 3 = -22</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="is-clickable" onclick="console.log('click')">
-                        <span class="expression">12 + 32 * 2 - 74 + 4 * 3 = -22</span>
-                    </td>
-                </tr>
+<!--                Here will be rows with expressions and values from the history -->
                 </tbody>
             </table>
         </div>
@@ -57,7 +38,7 @@
 
                     <label>
                         <input class="input is-rounded mb-1 is-family-monospace" id="calculatorInput" type="text"/>
-                        <span id="calculatorResult">Result: </span>
+                        <span id="calculatorResult"></span>
                     </label>
                 </div>
                 <div class="fixed-grid has-4-cols">
@@ -90,8 +71,8 @@
         <div class="column is-1"></div>
     </div>
 </section>
-<script src="./scripts/calculator.js"></script>
-<script src="./scripts/history.js"></script>
+<script src="scripts/calculator.js"></script>
+<script src="scripts/history.js"></script>
 </body>
 
 </html>
