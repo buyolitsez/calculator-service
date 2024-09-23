@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "2.0.10"
     kotlin("plugin.serialization") version "2.0.20"
     id("io.ktor.plugin") version "3.0.0-rc-1"
+    application
 }
 
 group = "com.github.heheteam"
@@ -28,6 +29,7 @@ dependencies {
 
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
+    implementation("io.ktor:ktor-server-html-builder:2.0.0")
 
     testImplementation("io.ktor:ktor-server-tests:2.3.12")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.3.12")
