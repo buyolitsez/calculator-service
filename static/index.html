@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/solid.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+<section class="section">
+    <div class="columns is-tablet">
+        <div class="column is-1"></div>
+
+        <!-- History -->
+        <div class="column is-5">
+            <h2 class="title is-4 has-text-centered">History</h2>
+            <table class="table is-fullwidth has-text-centered is-family-monospace" id="history">
+            </table>
+        </div>
+
+        <!-- Calculator -->
+        <div class="column is-5" style="height:90vh; position: sticky; top: 0">
+            <div>
+                <div class="block has-text-centered">
+                    <h1 class="title">Calculator</h1>
+
+                    <label>
+                        <input class="input is-rounded mb-1 is-family-monospace" id="calculatorInput" type="text"/>
+                        <span id="calculatorResult">Result: </span>
+                    </label>
+                </div>
+                <div class="fixed-grid has-4-cols">
+                    <div class="grid" id="calculatorButtons">
+                        <button class="button cell" id="AC">AC</button>
+                        <button class="button cell" id="(">(</button>
+                        <button class="button cell" id=")">)</button>
+                        <button class="button cell" id="/"><i class="fas fa-divide"></i></button>
+                        <button class="button cell" id="7">7</button>
+                        <button class="button cell" id="8">8</button>
+                        <button class="button cell" id="9">9</button>
+                        <button class="button cell" id="*"><i class="fa-solid fa-xmark"></i></button>
+                        <button class="button cell" id="4">4</button>
+                        <button class="button cell" id="5">5</button>
+                        <button class="button cell" id="6">6</button>
+                        <button class="button cell" id="-"><i class="fa-solid fa-minus"></i></button>
+                        <button class="button cell" id="1">1</button>
+                        <button class="button cell" id="2">2</button>
+                        <button class="button cell" id="3">3</button>
+                        <button class="button cell" id="+"><i class="fa-solid fa-plus"></i></button>
+                        <button class="button cell" id="0">0</button>
+                        <button class="button cell" id=".">.</button>
+                        <button class="button cell" id="backspace"><i class="fa-solid fa-delete-left"></i></button>
+                        <button class="button cell" id="="><i class="fa-solid fa-equals"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-1"></div>
+    </div>
+</section>
+<script src="scripts/calculator.js"></script>
+<script src="scripts/history.js"></script>
+</body>
+
+</html>

@@ -3,11 +3,11 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/calculator-backend" />
+        <option name="gradleJvm" value="openjdk-22" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/calculator-backend" />
           </set>
         </option>
       </GradleProjectSettings>
