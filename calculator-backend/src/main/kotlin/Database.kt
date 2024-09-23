@@ -107,9 +107,11 @@ class Database private constructor(private val path: Path, private val allEntrie
         }
 
         fun openDatabase(path: Path): Result<Database, FileOpenError> {
-            return tryToFindDatabase(path).onFailure {
+            val existingDatabase = tryToFindDatabase(path)
+            return if (existingDatabase.isOk)
+                existingDatabase
+            else
                 createEmptyDatabase(path)
-            }
         }
     }
 }
