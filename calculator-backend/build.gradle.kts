@@ -22,6 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-host-common-jvm")
+    implementation("io.ktor:ktor-server-cors:2.3.12")
 
     implementation("ch.qos.logback:logback-classic:1.5.8")
 
@@ -32,8 +33,8 @@ dependencies {
     testImplementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     testImplementation("io.ktor:ktor-client-mock:2.3.12")
     testImplementation("io.ktor:ktor-server-test-host:2.3.12")
+    implementation("io.ktor:ktor-server-call-logging")
 
-    implementation("org.jetbrains.kotlin:kotlin-build-tools-impl:2.0.20")
     testImplementation(kotlin("test"))
 }
 
