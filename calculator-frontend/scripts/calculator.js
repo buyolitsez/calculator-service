@@ -30,12 +30,16 @@ function typeBackspace() {
 }
 
 input.addEventListener('keydown', function (event) {
-    const key = event.key.toLowerCase()
+    let key = event.key.toLowerCase();
 
     // Prevent typing of non-permitted visible characters
-    if (!/[\n\d*/()=+-]/.test(key) && key.length === 1) {
+    if (!/[\n\d,.*/()=+-]/.test(key) && key.length === 1) {
         event.preventDefault()
         return;
+    }
+
+    if(key === ","){
+        key = '.'
     }
 
     if (keyButtonMap.has(key)) {

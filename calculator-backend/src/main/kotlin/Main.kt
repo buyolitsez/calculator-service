@@ -11,6 +11,7 @@ import java.nio.file.Paths
 
 val databasePath: Path = Paths.get("./database.json")
 const val maxHistoryEntries = 50
+
 fun main() {
     embeddedServer(
         Netty, port = 8080,
