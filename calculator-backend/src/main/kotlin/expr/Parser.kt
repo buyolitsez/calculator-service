@@ -24,13 +24,13 @@ fun StringBuilder.pop(): String {
 
 data class Token(val value: String, val index: Int = 0)
 
-fun getTokens(input: StringBuilder): ArrayDeque<Token> {
+fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
 
     if (input.isEmpty())
-        throw IllegalStateException("empty expression")
+        return Err(InvalidInputError("empty expression"))
 
     if (input.first() in "*/")
-        throw IllegalStateException("unary operator must be '-' or '+'")
+        return Err(InvalidInputError("unary operator must be '-' or '+'"))
 
     while (input.last() in CALC_SYMBOLS)
         input.deleteCharAt(input.lastIndex)
@@ -57,7 +57,7 @@ fun getTokens(input: StringBuilder): ArrayDeque<Token> {
 
                 balance -= 1
                 if (balance < 0)
-                    throw IllegalStateException("extra closing parenthesis at position $index")
+                    return Err(InvalidInputError("extra closing parenthesis at position $index"))
 
                 if (index - opening_paranthesis_current_positions.peek() == 1) {
                     opening_paranthesis_current_positions.pop()
@@ -72,10 +72,10 @@ fun getTokens(input: StringBuilder): ArrayDeque<Token> {
 
             in CALC_SYMBOLS -> {
                 if (tokens.last.value in CALC_SYMBOLS)
-                    throw IllegalStateException("two following operations at $index")
+                    return Err(InvalidInputError("two following operations at $index"))
 
                 if (tokens.last.value == "(" && input.first() in "*/")
-                    throw IllegalStateException("unary operator must be '-' or '+'")
+                    return Err(InvalidInputError("unary operator must be '-' or '+'"))
 
                 tokens.addLast(Token(input.pop(), ++index))
             }
@@ -94,22 +94,22 @@ fun getTokens(input: StringBuilder): ArrayDeque<Token> {
                         fractional.append(input.pop()).also { ++index }
 
                     if (fractional.length == 1)
-                        throw IllegalStateException("unexpected delimiter at position $index")
+                        return Err(InvalidInputError("unexpected delimiter at position $index"))
                 }
                 tokens.addLast(Token(integer.append(fractional).toString())).also { ++numbers }
             }
 
-            else -> throw IllegalStateException("invalid symbol at position ${index + 1}")
+            else -> return Err(InvalidInputError("invalid symbol at position ${index + 1}"))
         }
     }
 
     if (numbers == 0)
-        throw IllegalStateException("empty expression (expression must contain at least one number)")
+        return Err(InvalidInputError("empty expression (expression must contain at least one number)"))
 
     if (opening_paranthesis_current_positions.isNotEmpty()) {
-        throw IllegalStateException("opening parenthesis at position ${opening_paranthesis_current_positions.first()} was never closed")
+        return Err(InvalidInputError("opening parenthesis at position ${opening_paranthesis_current_positions.first()} was never closed"))
     }
-    return tokens
+    return Ok(tokens)
 }
 
 class Parser(private val tokens: ArrayDeque<Token>) {
@@ -158,15 +158,15 @@ class Parser(private val tokens: ArrayDeque<Token>) {
 }
 
 fun parseExpr(input: String): Result<Ast, ParsingError> {
-    try {
-        val tokens = getTokens(
-            StringBuilder(
-                input.replace(" ", "")
-            )
+    val tokens = getTokens(
+        StringBuilder(
+            input.replace(" ", "")
         )
-        val parsed = Parser(tokens).parse()
-        return Ok(parsed)
-    } catch (exception: IllegalStateException) {
-        return Err(InvalidInputError(exception.message ?: "parsing error"))
-    }
+    )
+
+    if (tokens.isErr)
+        return Err(tokens.error)
+
+    val parsed = Parser(tokens.value).parse()
+    return Ok(parsed)
 }
