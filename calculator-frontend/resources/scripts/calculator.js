@@ -74,9 +74,10 @@ function postExpression() {
     }).then(async (text) => {
         // TODO: handle expression evaluation errors
         resultField.innerText += " " + await text
-    })
 
-    fetchHistory()
+        // call it only when expression is correct!
+        addToHistory(input.value, resultField.innerText)
+    })
 }
 
 buttons.forEach(button => {
