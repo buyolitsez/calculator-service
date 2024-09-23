@@ -35,11 +35,6 @@ fun Application.configureRouting(
     }
 
     routing {
-        staticFiles("/", File(pathToResources), index = "index.html")
-
-        get("/") {
-            call.respondFile(File(pathToResources + "index.html"))
-        }
 
         post (computationRequest) {
             val requestBody = call.receive<Map<String, String>>() // Read JSON as a map

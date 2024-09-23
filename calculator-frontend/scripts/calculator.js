@@ -62,7 +62,7 @@ function unwrapError(json) {
 function postExpression() {
     resultField.innerText = "******"
     resultField.classList.add("has-skeleton")
-    fetch("/calculator", {
+    fetch("http://localhost:8080/calculator", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

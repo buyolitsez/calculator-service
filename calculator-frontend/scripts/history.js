@@ -6,7 +6,7 @@ const historyTable = document.getElementById("history")
  * must be called only once: at the launch of website 
  */
 function getHistory() {
-    fetch("/history")
+    fetch("http://localhost:8080/history")
     .then(response => {
         console.log(response);
         return response.json();
