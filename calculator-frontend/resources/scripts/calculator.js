@@ -61,7 +61,7 @@ function postExpression() {
     fetch("/calculator", {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text;charset=utf-8'
         },
         body: JSON.stringify({"expression": input.value})
     }).then((response) => {

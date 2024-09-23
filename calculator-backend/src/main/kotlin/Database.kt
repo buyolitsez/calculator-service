@@ -1,7 +1,9 @@
 package com.github.heheteam
 
 import com.github.heheteam.expr.Value
-import com.github.michaelbull.result.*
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -100,12 +102,6 @@ class Database private constructor(private val path: Path, private val allEntrie
                 return Err(FileOpenError("File is not writable"))
             }
             return Ok(Database(path))
-        }
-
-        fun openOrCreateDatabase(path: Path): Result<Database, FileOpenError> {
-            return tryToFindDatabase(path).onFailure {
-                createEmptyDatabase(path)
-            }
         }
     }
 }
