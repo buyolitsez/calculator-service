@@ -76,7 +76,7 @@ function postExpression() {
         resultField.innerText += " " + await text
 
         // call it only when expression is correct!
-        addToHistory(input.value, resultField.innerText)
+        addToHistoryTable(input.value, resultField.innerText)
     })
 }
 

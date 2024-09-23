@@ -7,10 +7,12 @@ const historyTable = document.getElementById("history")
  */
 function getHistory() {
     fetch("/history")
-    .then(response => response.json())
-    .then(async (json) => {
+    .then(response => {
+        console.log(response);
+        return response.json();
+    }).then(async (json) => {
         await json.forEach(expression => {
-            addToHistoryTable(expression.exprString, expression.value, -1)
+            addToHistoryTable(expression.exprString, expression.value, -1);
         });
     })
 }
@@ -28,25 +30,6 @@ function addToHistoryTable(exprString, value, ind = 0) {
     expr.classList.add("expression");
     exprCell.appendChild(expr);
     exprCell.onclick = getFromHistoryTable;
-}
-
-
-/**
- * adds to html table and DB
- */
-function addToHistory(_exprString, _value) {
-    addToHistoryTable(_exprString, _value)
-
-    var data = { exprString: _exprString, value: _value };
-    fetch("/history", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text;charset=utf-8'
-        },
-        body: JSON.stringify(data)
-      }).then(async (response) => {
-        console.log(await response.text());
-    });
 }
 
 /**
