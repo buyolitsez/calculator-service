@@ -1,5 +1,6 @@
 package com.example.calculator.test
 
+import com.github.heheteam.ParenthesisInvalidExpressionError
 import com.github.heheteam.expr.COMPUTATION_REQUEST
 import com.github.heheteam.expr.parseExpr
 import com.github.heheteam.module
@@ -8,10 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.math.abs
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class TestBackendServer {
     @Test
@@ -69,18 +67,52 @@ class TestBackendServer {
     }
 
     @Test
-    fun expressionParsingComplexValidTest() {
+    fun expressionParsingComplexTest() {
         var parsed = parseExpr("1+20()()*4")
-        assertTrue(parsed.isOk)
-        var result = parsed.value.eval()
-        assertTrue(result.isOk)
-        assertTrue(abs(81.0 - result.value) < 1e-6)
+        assertTrue(parsed.isErr)
 
         parsed = parseExpr("-1+200+3-")
         assertTrue(parsed.isOk)
-        result = parsed.value.eval()
+        var result = parsed.value.eval()
         assertTrue(result.isOk)
         assertTrue(abs(202.0 - result.value) < 1e-6)
+
+        parsed = parseExpr("-1-(-2-(-3))")
+        assertTrue(parsed.isOk)
+        result = parsed.value.eval()
+        assertTrue(result.isOk)
+        assertTrue(abs(-2.0 - result.value) < 1e-6)
+
+        parsed = parseExpr("-1(2)")
+        assertTrue(parsed.isErr)
+        assertNotNull(parsed.error as ParenthesisInvalidExpressionError)
+    }
+
+    @Test
+    fun implicitMultiplicationTest() {
+        var parsed = parseExpr("2((9+1)(5*2))3(1+1)")
+        assertTrue(parsed.isOk)
+        var result = parsed.value.eval()
+        assertTrue(result.isOk)
+        assertTrue(abs(1200.0 - result.value) < 1e-6)
+
+        parsed = parseExpr("2(1+1)/2+3((4+6)+(8+2))")
+        assertTrue(parsed.isOk)
+        result = parsed.value.eval()
+        assertTrue(result.isOk)
+        assertTrue(abs(62.0 - result.value) < 1e-6)
+    }
+
+    @Test
+    fun numbersStartingWithZero() {
+        var parsed = parseExpr("1.100+0011-100")
+        assertTrue(parsed.isErr)
+
+        parsed = parseExpr("0.2+0.02")
+        assertTrue(parsed.isOk)
+        var result = parsed.value.eval()
+        assertTrue(result.isOk)
+        assertTrue(abs(0.22 - result.value) < 1e-6)
     }
 
     @Test
