@@ -21,23 +21,32 @@ And the frontend will be available at `http://localhost:8000`.
 
 ## Examples
 
-![img.png](pics/example1.png)
+![img.png](pics/correct-example.png)
 
 ### Errors examples:
-![img_1.png](pics/error-example-wrong-parenthesis.png)
+
+![img_1.png](pics/error-example-opening-parenthesis-was-never-closed.png)
+![img_1.png](pics/mobile-error-example-opening-parenthesis-has-never-closed.png)
 
 ---
 
-![img.png](pics/error-example-zero-division.png)
+![img.png](pics/error-example-zero-division.png) 
+![img.png](pics/mobile-error-example-division-by-zero.png)
 
 ---
 
-![img.png](pics/errors-example-empty-expression.png)
+![img.png](pics/error-example-empty-expression.png)
+![img.png](pics/mobile-error-example-empty-expression-in-parenthesis.png)
 
 ---
 
-![img.png](img.png)
+![img_1.png](pics/error-example-unexpected-delimeter.png)
+![img_1.png](pics/mobile-error-example-unexpected-delimiter.png)
 
 ---
 
-![img_1.png](pics/errors-example-unexpected-delimeter.png)
+![img_1.png](pics/mobile-error-example-consecutive-operations.png)
+![img_1.png](pics/mobile-error-example-extra-closing-parenthesis.png)
+![img_1.png](pics/mobile-error-example-invalid-expression-in-parenthesis.png)
+![img_1.png](pics/mobile-error-example-number-starts-with-zero.png) 
+![img_1.png](pics/mobile-error-example-unary-operator-must-be.png)
