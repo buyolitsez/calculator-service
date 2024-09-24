@@ -102,7 +102,7 @@ class ParenthesisInvalidExpressionError(
     private val position: Int,
 ) : ParsingError() {
     constructor(position: Int) : this(
-        "invalid expression in parenthesis at position ${position - 1} or they are ambiguous",
+        "invalid expression in parenthesis at position ${position - 1}",
         position,
     )
 }

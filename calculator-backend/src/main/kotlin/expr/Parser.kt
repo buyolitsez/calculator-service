@@ -64,7 +64,11 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
 
                 when (index - openingParanthesisCurrentPositions.peek()) {
                     1 -> return Err(ParenthesisEmptyExpressionError(index))
-                    2 -> return Err(ParenthesisInvalidExpressionError(index))
+                    2 -> {
+                        if (tokens.last.value in CALC_SYMBOLS) {
+                            return Err(ParenthesisInvalidExpressionError(index))
+                        }
+                    }
                 }
 
                 tokens.addLast(Token(input.pop(), index))

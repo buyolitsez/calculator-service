@@ -83,7 +83,13 @@ class TestBackendServer {
         assertTrue(result.isOk)
         assertTrue(abs(-2.0 - result.value) < 1e-6)
 
-        parsed = parseExpr("-1(2)")
+        parsed = parseExpr("-1(2)+(1(2(3)))-(4)5")
+        assertTrue(parsed.isOk)
+        result = parsed.value.eval()
+        assertTrue(result.isOk)
+        assertTrue(abs(-16.0 - result.value) < 1e-6)
+
+        parsed = parseExpr("(2)(4)-(+)")
         assertTrue(parsed.isErr)
         assertNotNull(parsed.error as ParenthesisInvalidExpressionError)
     }
@@ -258,7 +264,7 @@ class TestBackendServer {
                     setBody("{\"expression\": \"100.1 - 5 + 6.. 7 * 9\"}")
                 }
 
-            assertEquals(HttpStatusCode.BadRequest, response.status)
+            assertEquals(HttpStatusCode.OK, response.status)
             val result = response.bodyAsText()
             assertContains(result, "delimiter")
             assertContains(result, "10")
