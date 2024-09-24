@@ -42,15 +42,23 @@ class StartsWithZeroError(
 class EmptyExpressionError(override val message: String = "empty expression") : ParsingError()
 
 @Serializable
-class UnaryOperatorError(override val message: String = "unary operator must be '-' or '+'") : ParsingError()
-
-@Serializable
-class FollowingOperationsError(
+class UnaryOperatorError(
     override val message: String,
     private val position: Int,
 ) : ParsingError() {
     constructor(position: Int) : this(
-        "following operations at position $position",
+        "unary operator at position $position must be '-' or '+'",
+        position,
+    )
+}
+
+@Serializable
+class ConsecutiveOperationsError(
+    override val message: String,
+    private val position: Int,
+) : ParsingError() {
+    constructor(position: Int) : this(
+        "consecutive operations at position $position",
         position,
     )
 }
