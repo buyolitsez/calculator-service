@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "2.0.10"
     kotlin("plugin.serialization") version "2.0.20"
     id("io.ktor.plugin") version "3.0.0-rc-1"
+    id("com.diffplug.spotless") version "7.0.0.BETA2"
 }
 
 group = "com.github.heheteam"
@@ -43,4 +44,28 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(18)
+}
+
+spotless {
+    kotlin {
+        ktlint("1.0.0")
+            .setEditorConfigPath("$projectDir/.editorconfig")
+            .editorConfigOverride(
+                mapOf(
+                    "indent_size" to 4,
+                    "ktlint_code_style" to "intellij_idea"
+                )
+            )
+            .customRuleSets(
+                listOf(
+                    "io.nlopez.compose.rules:ktlint:0.3.3"
+                )
+            )
+        target("**/*.kt")
+        val spotlessFiles: String? = findProperty("spotlessFiles") as String?
+        if (spotlessFiles != null) {
+            val filesList = spotlessFiles.split(",").map { it.trim() }
+            target(filesList)
+        }
+    }
 }
