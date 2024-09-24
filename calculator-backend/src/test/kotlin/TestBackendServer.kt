@@ -10,7 +10,7 @@ import io.ktor.server.testing.*
 import kotlin.math.abs
 import kotlin.test.*
 
-class BackendServerTest {
+class TestBackendServer {
 
     @Test
     fun expressionParsingEmptyStringTest() {
