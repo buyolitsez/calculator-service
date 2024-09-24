@@ -1,7 +1,7 @@
 package com.example.calculator.test
 
 import com.github.heheteam.expr.parseExpr
-import com.github.heheteam.expr.computationRequest
+import com.github.heheteam.expr.COMPUTATION_REQUEST
 import com.github.heheteam.module
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -114,7 +114,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json
@@ -132,7 +132,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json
@@ -150,7 +150,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json
@@ -168,7 +168,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json
@@ -186,7 +186,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json
@@ -204,7 +204,7 @@ class BackendServerTest {
             module()
         }
 
-        val response = client.post(computationRequest) {
+        val response = client.post(COMPUTATION_REQUEST) {
             header(
                 HttpHeaders.ContentType,
                 ContentType.Application.Json

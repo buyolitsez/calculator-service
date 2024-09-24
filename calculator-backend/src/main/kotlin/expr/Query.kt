@@ -11,9 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.nio.file.Path
 
-const val computationRequest = "/calculator"
-const val historyRequest = "/history"
-const val clearHistoryRequest = "/clear/history"
+const val COMPUTATION_REQUEST = "/calculator"
+const val HISTORY_REQUEST = "/history"
+const val CLEAR_HISTORY_REQUEST = "/clear/history"
 lateinit var database: Database
 
 fun Application.configureRouting(
@@ -34,7 +34,7 @@ fun Application.configureRouting(
 
     routing {
 
-        post (computationRequest) {
+        post (COMPUTATION_REQUEST) {
             val requestBody = call.receive<Map<String, String>>() // Read JSON as a map
             val expr = requestBody["expression"] ?: ""
 
@@ -56,11 +56,11 @@ fun Application.configureRouting(
             database.appendEntry(Entry(expr, result))
         }
 
-        get (historyRequest) {
+        get (HISTORY_REQUEST) {
             call.respond(database.getLatestItemsForHistory(maxHistoryEntries))
         }
 
-        post (clearHistoryRequest) {
+        post (CLEAR_HISTORY_REQUEST) {
             database.clearAllEntries()
             call.respond(HttpStatusCode.OK)
         }
