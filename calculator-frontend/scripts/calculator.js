@@ -38,6 +38,8 @@ input.addEventListener('keydown', function (event) {
         return;
     }
 
+    resetSelectionColor()
+
     if (key === ",") {
         key = '.'
     }
@@ -59,8 +61,25 @@ input.addEventListener('keydown', function (event) {
     }
 })
 
+document.addEventListener("mousedown",()=>{
+    resetSelectionColor()
+})
+
 function unwrapError(json) {
-    return JSON.parse(json).message
+    return JSON.parse(json)
+}
+
+function highlightSymbol(position) {
+    input.setSelectionRange(position - 1, position)
+
+}
+
+function changeSelectionColor(type){
+    input.classList.add(type)
+}
+
+function resetSelectionColor(){
+    input.classList.remove("error")
 }
 
 function postExpression() {
@@ -76,7 +95,12 @@ function postExpression() {
         resultField.classList.remove("has-skeleton")
         if (!response.ok) {
             resultField.classList.add("has-text-danger")
-            resultField.innerText = "Error: " + unwrapError(await response.text())
+            const error = unwrapError(await response.text())
+            resultField.innerText = "Error: " + error.message
+            if(Object.hasOwn(error, "position")) {
+                changeSelectionColor("error")
+                highlightSymbol(parseInt(error.position))
+            }
             return
         }
         resultField.classList.remove("has-text-danger")
