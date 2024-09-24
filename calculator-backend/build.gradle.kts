@@ -61,5 +61,11 @@ spotless {
                     "io.nlopez.compose.rules:ktlint:0.3.3"
                 )
             )
+        target("**/*.kt")
+        val spotlessFiles: String? = findProperty("spotlessFiles") as String?
+        if (spotlessFiles != null) {
+            val filesList = spotlessFiles.split(",").map { it.trim() }
+            target(filesList)
+        }
     }
 }
