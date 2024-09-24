@@ -1,7 +1,6 @@
 package com.github.heheteam.expr
 
-import com.github.heheteam.InvalidInputError
-import com.github.heheteam.ParsingError
+import com.github.heheteam.*
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
@@ -31,15 +30,11 @@ data class Token(
 
 fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
     if (input.isEmpty()) {
-        return Err(InvalidInputError("empty expression"))
+        return Err(EmptyExpressionError())
     }
 
     if (input.first() in "*/") {
-        return Err(InvalidInputError("unary operator must be '-' or '+'"))
-    }
-
-    while (input.last() in CALC_SYMBOLS) {
-        input.deleteCharAt(input.lastIndex)
+        return Err(UnaryOperatorError())
     }
 
     val tokens = ArrayDeque<Token>()
@@ -64,27 +59,29 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
 
                 balance -= 1
                 if (balance < 0) {
-                    return Err(InvalidInputError("extra closing parenthesis at position $index"))
+                    return Err(ParenthesisExtraClosingError(index))
                 }
 
-                if (index - openingParanthesisCurrentPositions.peek() == 1) {
-                    openingParanthesisCurrentPositions.pop()
-                    tokens.removeLast()
-                    input.deleteCharAt(0)
-                    continue
+                when (index - openingParanthesisCurrentPositions.peek()) {
+                    1 -> return Err(ParenthesisEmptyExpressionError(index))
+                    2 -> return Err(ParenthesisInvalidExpressionError(index))
                 }
 
                 tokens.addLast(Token(input.pop(), index))
                 openingParanthesisCurrentPositions.pop()
+
+                if (input.isNotEmpty() && (input.first() in DIGITS || input.first() == '(')) {
+                    tokens.addLast(Token("*"))
+                }
             }
 
             in CALC_SYMBOLS -> {
                 if (tokens.last.value in CALC_SYMBOLS) {
-                    return Err(InvalidInputError("two following operations at $index"))
+                    return Err(FollowingOperationsError(index))
                 }
 
                 if (tokens.last.value == "(" && input.first() in "*/") {
-                    return Err(InvalidInputError("unary operator must be '-' or '+'"))
+                    return Err(UnaryOperatorError())
                 }
 
                 tokens.addLast(Token(input.pop(), ++index))
@@ -98,31 +95,43 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
                     integer.append(input.pop()).also { ++index }
                 }
 
+                if (integer.first() == '0' && integer.length > 1) {
+                    return Err(StartsWithZeroError(index - integer.length + 1))
+                }
+
                 if (input.isNotEmpty() && input.first() == '.') {
                     fractional.append(input.pop()).also { ++index }
 
-                    while (input.isNotEmpty() && input.first().isDigit()) {
+                    while (input.isNotEmpty() && input.first().isDigit())
                         fractional.append(input.pop()).also { ++index }
-                    }
 
                     if (fractional.length == 1) {
-                        return Err(InvalidInputError("unexpected delimiter at position $index"))
+                        return Err(DelimiterError(index))
                     }
                 }
                 tokens.addLast(Token(integer.append(fractional).toString())).also { ++numbers }
+
+                if (input.isNotEmpty() && input.first() == '(') {
+                    tokens.addLast(Token("*"))
+                }
             }
 
-            else -> return Err(InvalidInputError("invalid symbol at position ${index + 1}"))
+            else -> return Err(InvalidSymbolError(index))
         }
     }
 
     if (numbers == 0) {
-        return Err(InvalidInputError("empty expression (expression must contain at least one number)"))
+        return Err(EmptyExpressionError())
     }
 
     if (openingParanthesisCurrentPositions.isNotEmpty()) {
-        return Err(InvalidInputError("opening parenthesis at position ${openingParanthesisCurrentPositions.first()} was never closed"))
+        return Err(ParenthesisExtraOpeningError(openingParanthesisCurrentPositions.first()))
     }
+
+    if (tokens.last.value in CALC_SYMBOLS) {
+        tokens.removeLast()
+    }
+
     return Ok(tokens)
 }
 
@@ -166,11 +175,13 @@ class Parser(
         }
 
         if (token.value == "-") {
-            return Numeric(tokens.removeFirst().value.toDouble(), true)
+            return Multiply(parseParenthesis(), Numeric(-1.0))
         }
+
         if (token.value == "+") {
-            return Numeric(tokens.removeFirst().value.toDouble())
+            return Multiply(parseParenthesis(), Numeric(1.0))
         }
+
         return Numeric(token.value.toDouble())
     }
 }
