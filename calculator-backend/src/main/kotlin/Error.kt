@@ -34,7 +34,7 @@ class StartsWithZeroError
     private val position: Int
 ) : ParsingError() {
     constructor(position: Int): this(
-        "numbers starts with zero at position $position",
+        "number starts with zero at position $position",
         position
     )
 }
