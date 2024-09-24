@@ -38,14 +38,14 @@ fun Application.configureRouting(
             val ast = parseExpr(expr)
 
             if (ast.isErr) {
-                call.respond(HttpStatusCode.BadRequest, ast.error)
+                call.respond(HttpStatusCode.OK, ast.error)
                 return@post
             }
 
             val result = ast.value.eval()
 
             if (result.isErr) {
-                call.respond(HttpStatusCode.BadRequest, result.error)
+                call.respond(HttpStatusCode.OK, result.error)
                 return@post
             }
 
