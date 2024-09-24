@@ -29,11 +29,13 @@ data class Token(
 )
 
 fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
-    if (input.isEmpty())
+    if (input.isEmpty()) {
         return Err(EmptyExpressionError())
+    }
 
-    if (input.first() in "*/")
+    if (input.first() in "*/") {
         return Err(UnaryOperatorError())
+    }
 
     val tokens = ArrayDeque<Token>()
     val openingParanthesisCurrentPositions = Stack<Int>()
@@ -103,8 +105,9 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
                     while (input.isNotEmpty() && input.first().isDigit())
                         fractional.append(input.pop()).also { ++index }
 
-                    if (fractional.length == 1)
+                    if (fractional.length == 1) {
                         return Err(DelimiterError(index))
+                    }
                 }
                 tokens.addLast(Token(integer.append(fractional).toString())).also { ++numbers }
 
@@ -117,8 +120,9 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
         }
     }
 
-    if (numbers == 0)
+    if (numbers == 0) {
         return Err(EmptyExpressionError())
+    }
 
     if (openingParanthesisCurrentPositions.isNotEmpty()) {
         return Err(ParenthesisExtraOpeningError(openingParanthesisCurrentPositions.first()))
