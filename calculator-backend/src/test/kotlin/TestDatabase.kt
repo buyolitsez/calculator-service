@@ -18,12 +18,14 @@ class TestDatabase {
     val empty = "[]"
     val with1Query = "[{\"type\":\"com.github.heheteam.EntrySuccess\",\"exprString\":\"2+3\",\"value\":5.0}]"
 
-    @Test fun testCreateEmptyDatabase() {
+    @Test
+    fun testCreateEmptyDatabase() {
         val res = Database.createEmptyDatabase(path)
         assert(res.isOk)
     }
 
-    @Test fun testTryToCreateDatabaseThatAlreadyExists() {
+    @Test
+    fun testTryToCreateDatabaseThatAlreadyExists() {
         Files.createFile(path)
         Files.write(path, empty.toByteArray())
 
@@ -32,7 +34,8 @@ class TestDatabase {
         assertEquals("Error creating the file", res.error.message)
     }
 
-    @Test fun testOpenEmptyDatabase() {
+    @Test
+    fun testOpenEmptyDatabase() {
         Files.createFile(path)
         Files.write(path, empty.toByteArray())
 
@@ -40,7 +43,8 @@ class TestDatabase {
         assert(res.isOk)
     }
 
-    @Test fun testAppendAndQueryEntry() {
+    @Test
+    fun testAppendAndQueryEntry() {
         Files.createFile(path)
         Files.write(path, empty.toByteArray())
 
@@ -53,7 +57,8 @@ class TestDatabase {
         assertEquals(entrySuccess.value, entry.value)
     }
 
-    @Test fun testOpenNonEmptyDatabase() {
+    @Test
+    fun testOpenNonEmptyDatabase() {
         Files.createFile(path)
         Files.write(path, with1Query.toByteArray())
 
@@ -66,7 +71,8 @@ class TestDatabase {
         assertEquals(entrySuccess.value.value, entry.value.value)
     }
 
-    @Test fun testGetLatestItemsForHistory() {
+    @Test
+    fun testGetLatestItemsForHistory() {
         Files.createFile(path)
         Files.write(path, with1Query.toByteArray())
 
@@ -74,7 +80,8 @@ class TestDatabase {
         assertEquals(with1Query, res.value.getLatestItemsForHistory(1))
     }
 
-    @Test fun testAppendAndQueryEntryToANonEmptyDatabase() {
+    @Test
+    fun testAppendAndQueryEntryToANonEmptyDatabase() {
         Files.createFile(path)
         Files.write(path, with1Query.toByteArray())
 
@@ -92,7 +99,8 @@ class TestDatabase {
         assertEquals(entryError.value.error.message, entry2.value.error.message)
     }
 
-    @AfterTest fun deleteFile() {
+    @AfterTest
+    fun deleteFile() {
         Files.delete(path)
     }
 }

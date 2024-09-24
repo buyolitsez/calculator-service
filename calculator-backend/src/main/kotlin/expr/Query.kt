@@ -20,21 +20,18 @@ fun Application.configureRouting(
     pathToDatabase: Path,
     maxHistoryEntries: Int,
 ) {
-
     val databaseResult = Database.openDatabase(pathToDatabase)
-    if(databaseResult.isErr){
+    if (databaseResult.isErr) {
         throw Exception(databaseResult.error.message)
     }
     database = databaseResult.value
-
 
     install(ContentNegotiation) {
         json()
     }
 
     routing {
-
-        post (COMPUTATION_REQUEST) {
+        post(COMPUTATION_REQUEST) {
             val requestBody = call.receive<Map<String, String>>() // Read JSON as a map
             val expr = requestBody["expression"] ?: ""
 
@@ -56,11 +53,11 @@ fun Application.configureRouting(
             database.appendEntry(Entry(expr, result))
         }
 
-        get (HISTORY_REQUEST) {
+        get(HISTORY_REQUEST) {
             call.respond(database.getLatestItemsForHistory(maxHistoryEntries))
         }
 
-        post (CLEAR_HISTORY_REQUEST) {
+        post(CLEAR_HISTORY_REQUEST) {
             database.clearAllEntries()
             call.respond(HttpStatusCode.OK)
         }
