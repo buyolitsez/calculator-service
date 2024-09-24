@@ -43,7 +43,7 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
     }
 
     val tokens = ArrayDeque<Token>()
-    val opening_paranthesis_current_positions = Stack<Int>()
+    val openingParanthesisCurrentPositions = Stack<Int>()
     var index = 0
     var balance = 0
     var numbers = 0
@@ -56,7 +56,7 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
         when (input.first()) {
             '(' -> {
                 tokens.addLast(Token(input.pop(), ++index))
-                opening_paranthesis_current_positions.push(index).also { ++balance }
+                openingParanthesisCurrentPositions.push(index).also { ++balance }
             }
 
             ')' -> {
@@ -67,15 +67,15 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
                     return Err(InvalidInputError("extra closing parenthesis at position $index"))
                 }
 
-                if (index - opening_paranthesis_current_positions.peek() == 1) {
-                    opening_paranthesis_current_positions.pop()
+                if (index - openingParanthesisCurrentPositions.peek() == 1) {
+                    openingParanthesisCurrentPositions.pop()
                     tokens.removeLast()
                     input.deleteCharAt(0)
                     continue
                 }
 
                 tokens.addLast(Token(input.pop(), index))
-                opening_paranthesis_current_positions.pop()
+                openingParanthesisCurrentPositions.pop()
             }
 
             in CALC_SYMBOLS -> {
@@ -120,8 +120,8 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
         return Err(InvalidInputError("empty expression (expression must contain at least one number)"))
     }
 
-    if (opening_paranthesis_current_positions.isNotEmpty()) {
-        return Err(InvalidInputError("opening parenthesis at position ${opening_paranthesis_current_positions.first()} was never closed"))
+    if (openingParanthesisCurrentPositions.isNotEmpty()) {
+        return Err(InvalidInputError("opening parenthesis at position ${openingParanthesisCurrentPositions.first()} was never closed"))
     }
     return Ok(tokens)
 }

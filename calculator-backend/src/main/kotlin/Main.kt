@@ -10,7 +10,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 val databasePath: Path = Paths.get("./database.json")
-const val maxHistoryEntries = 50
+const val MAX_HISTORY_ENTRIES = 50
 
 fun main() {
     embeddedServer(
@@ -30,5 +30,5 @@ fun Application.module() {
         allowMethod(HttpMethod.Post)
         anyHost()
     }
-    configureRouting(databasePath, maxHistoryEntries)
+    configureRouting(databasePath, MAX_HISTORY_ENTRIES)
 }
