@@ -59,21 +59,24 @@
                     <i class="fas fa-history"></i>
                 </span>
             </button>
-            <table class="table is-fullwidth has-text-centered is-family-monospace" id="history">
-                <tbody>
-                <!-- Here will be rows with expressions and values from the history -->
-                </tbody>
-            </table>
+            <div style="overflow: scroll; height: 75vh">
+                <table class="table is-fullwidth has-text-centered is-family-monospace" id="history">
+                    <tbody>
+                    <!-- Here will be rows with expressions and values from the history -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Calculator -->
-        <div class="column is-5" style="height:90vh; position: sticky; top: 0">
+        <div class="column is-5">
             <div>
                 <div class="block has-text-centered">
                     <h1 class="title">Calculator</h1>
 
                     <label>
-                        <input class="input is-rounded mb-1 is-family-monospace" id="calculatorInput" type="text"/>
+                        <input class="input is-rounded mb-1 is-family-monospace" id="calculatorInput" type="text"
+                               inputmode="none"/>
                         <span id="calculatorResult"></span>
                     </label>
                 </div>
