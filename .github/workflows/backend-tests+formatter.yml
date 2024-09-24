@@ -27,14 +27,19 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
 
+      - name: Make gradlew executable
+        working-directory: calculator-backend
+        run: chmod +x gradlew
+
       - name: Run Spotless Check on changed files
         working-directory: calculator-backend
         if: success()
         run: |
-          git diff --name-only > changed_files.txt
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          cat changed_files.txt
           CHANGED_FILES=$(grep ".kt$" changed_files.txt | tr '\n' ' ' | sed "s/calculator-backend\///g")
           if [ -n "$CHANGED_FILES" ]; then
-            ./gradlew spotlessCheck --files $CHANGED_FILES
+            ./gradlew spotlessCheck -PspotlessFiles="$CHANGED_FILES"
           else
             echo "No Kotlin files changed."
           fi
@@ -59,6 +64,5 @@ jobs:
       - name: Run Backend Tests
         working-directory: calculator-backend
         run: ./gradlew test
-
 
 
