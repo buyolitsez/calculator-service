@@ -61,7 +61,7 @@ input.addEventListener('keydown', function (event) {
     }
 })
 
-document.addEventListener("mousedown",()=>{
+document.addEventListener("mousedown", () => {
     resetSelectionColor()
 })
 
@@ -74,11 +74,11 @@ function highlightSymbol(position) {
 
 }
 
-function changeSelectionColor(type){
+function changeSelectionColor(type) {
     input.classList.add(type)
 }
 
-function resetSelectionColor(){
+function resetSelectionColor() {
     input.classList.remove("error")
 }
 
@@ -93,25 +93,28 @@ function postExpression() {
         body: JSON.stringify({"expression": input.value})
     }).then(async (response) => {
         resultField.classList.remove("has-skeleton")
-        if (!response.ok) {
-            resultField.classList.add("has-text-danger")
-            const error = unwrapError(await response.text())
-            resultField.innerText = "Error: " + error.message
-            if(Object.hasOwn(error, "position")) {
-                changeSelectionColor("error")
-                highlightSymbol(parseInt(error.position))
+        const data = await response.text()
+        let result = parseFloat(data);
+
+        if (!isNaN(result)) {
+            resultField.classList.remove("has-text-danger")
+            if (Math.abs(result - Math.round(result)) < 1e-9) {
+                result = Math.round(result)
+            } else {
+                result = result.toFixed(8) * 1
             }
+            resultField.innerText = "Result: " + result.toString()
+            addToHistoryTable(input.value, result)
             return
         }
-        resultField.classList.remove("has-text-danger")
-        let result = parseFloat(await response.text());
-        if (Math.abs(result - Math.round(result)) < 1e-9) {
-            result = Math.round(result)
-        } else {
-            result = result.toFixed(8) * 1
+
+        resultField.classList.add("has-text-danger")
+        const error = unwrapError(data)
+        resultField.innerText = "Error: " + error.message
+        if (Object.hasOwn(error, "position")) {
+            changeSelectionColor("error")
+            highlightSymbol(parseInt(error.position))
         }
-        resultField.innerText = "Result: " + result.toString()
-        addToHistoryTable(input.value, result)
     })
 }
 
