@@ -28,7 +28,9 @@ function addToHistoryTable(exprString, value, ind = 0) {
     const expr = document.createElement('span');
     expr.classList.add("is-clickable");
     expr.setAttribute("data-expression", exprString)
-    expr.textContent = (exprString + ' = ' + value).replaceAll(/([\d)])([=*/+-])/g, "$1 $2 ");
+    expr.innerText = (exprString + ' = ' + value)
+        .replaceAll(/([\d)])([=*/+-])/g, "$1 $2 ")
+        .replaceAll("*", "×");
     expr.classList.add("expression");
     exprCell.appendChild(expr);
     expr.onclick = getFromHistoryTable;
