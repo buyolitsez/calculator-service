@@ -34,7 +34,7 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
     }
 
     if (input.first() in "*/") {
-        return Err(UnaryOperatorError())
+        return Err(UnaryOperatorError(1))
     }
 
     val tokens = ArrayDeque<Token>()
@@ -77,11 +77,11 @@ fun getTokens(input: StringBuilder): Result<ArrayDeque<Token>, ParsingError> {
 
             in CALC_SYMBOLS -> {
                 if (tokens.last.value in CALC_SYMBOLS) {
-                    return Err(FollowingOperationsError(index))
+                    return Err(ConsecutiveOperationsError(index))
                 }
 
                 if (tokens.last.value == "(" && input.first() in "*/") {
-                    return Err(UnaryOperatorError())
+                    return Err(UnaryOperatorError(index + 1))
                 }
 
                 tokens.addLast(Token(input.pop(), ++index))
