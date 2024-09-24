@@ -37,7 +37,7 @@ jobs:
         run: |
           git diff --name-only HEAD^ HEAD > changed_files.txt
           cat changed_files.txt
-          CHANGED_FILES=$(grep ".kt$" changed_files.txt | tr '\n' ' ' | sed "s/calculator-backend\///g")
+          CHANGED_FILES=$(grep ".kt$" changed_files.txt | sed "s/calculator-backend\///g")
           if [ -n "$CHANGED_FILES" ]; then
             ./gradlew spotlessCheck -PspotlessFiles="$CHANGED_FILES"
           else

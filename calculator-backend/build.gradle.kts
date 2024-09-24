@@ -64,7 +64,8 @@ spotless {
         target("**/*.kt")
         val spotlessFiles: String? = findProperty("spotlessFiles") as String?
         if (spotlessFiles != null) {
-            val filesList = spotlessFiles.split(",").map { it.trim() }
+            val filesList = spotlessFiles.split("\n").map { it.trim() }
+            println("Spotless files: $filesList")
             target(filesList)
         }
     }
