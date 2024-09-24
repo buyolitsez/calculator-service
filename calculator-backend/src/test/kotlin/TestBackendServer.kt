@@ -1,17 +1,19 @@
 package com.example.calculator.test
 
+import com.github.heheteam.expr.COMPUTATION_REQUEST
 import com.github.heheteam.expr.parseExpr
-import com.github.heheteam.expr.computationRequest
 import com.github.heheteam.module
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.math.abs
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class BackendServerTest {
-
+class TestBackendServer {
     @Test
     fun expressionParsingEmptyStringTest() {
         val parsed = parseExpr("")
@@ -109,112 +111,124 @@ class BackendServerTest {
     }
 
     @Test
-    fun serverSimpleTest1() = testApplication {
-        application {
-            module()
-        }
+    fun serverSimpleTest1() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"(5-1)*4+(2/2-1)\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"(5-1)*4+(2/2-1)\"}")
+                }
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("16.0"))
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(response.bodyAsText().contains("16.0"))
+        }
 
     @Test
-    fun serverSimpleTest2() = testApplication {
-        application {
-            module()
-        }
+    fun serverSimpleTest2() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"5*5*5\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"5*5*5\"}")
+                }
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("125.0"))
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(response.bodyAsText().contains("125.0"))
+        }
 
     @Test
-    fun serverSimpleTest4() = testApplication {
-        application {
-            module()
-        }
+    fun serverSimpleTest4() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"2+ ( 2+ (2+( 2+ 2)- 3) - 3) -  3\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"2+ ( 2+ (2+( 2+ 2)- 3) - 3) -  3\"}")
+                }
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("1.0"))
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(response.bodyAsText().contains("1.0"))
+        }
 
     @Test
-    fun serverSimpleTest5() = testApplication {
-        application {
-            module()
-        }
+    fun serverSimpleTest5() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"8-3\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"8-3\"}")
+                }
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("5.0"))
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(response.bodyAsText().contains("5.0"))
+        }
 
     @Test
-    fun serverOkTest() = testApplication {
-        application {
-            module()
-        }
+    fun serverOkTest() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"99.25*3-(101.3*5-(71*2.2-(10*4-5.5))+60)-11\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"99.25*3-(101.3*5-(71*2.2-(10*4-5.5))+60)-11\"}")
+                }
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(abs(-158.05 - response.bodyAsText().toDouble()) < 1e-6)
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(abs(-158.05 - response.bodyAsText().toDouble()) < 1e-6)
+        }
 
     @Test
-    fun serverErrTest() = testApplication {
-        application {
-            module()
-        }
+    fun serverErrTest() =
+        testApplication {
+            application {
+                module()
+            }
 
-        val response = client.post(computationRequest) {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-            setBody("{\"expression\": \"100.1 - 5 + 6.. 7 * 9\"}")
-        }
+            val response =
+                client.post(COMPUTATION_REQUEST) {
+                    header(
+                        HttpHeaders.ContentType,
+                        ContentType.Application.Json,
+                    )
+                    setBody("{\"expression\": \"100.1 - 5 + 6.. 7 * 9\"}")
+                }
 
-        assertEquals(HttpStatusCode.BadRequest, response.status)
-        val result = response.bodyAsText()
-        assertContains(result, "delimiter")
-        assertContains(result, "10")
-    }
+            assertEquals(HttpStatusCode.BadRequest, response.status)
+            val result = response.bodyAsText()
+            assertContains(result, "delimiter")
+            assertContains(result, "10")
+        }
 }
