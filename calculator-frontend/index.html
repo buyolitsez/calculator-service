@@ -22,6 +22,10 @@
         .has-background-darker {
             background-color: #7762ff;
         }
+
+        .is-circular {
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -33,6 +37,11 @@
         <!-- History -->
         <div class="column is-5 has-text-centered">
             <h2 class="title is-4 has-text-centered">History</h2>
+            <button class="button is-circular" id="clearHistoryButton">
+                <span class="icon is-small">
+                    <i class="fas fa-history"></i>
+                </span>
+            </button>
             <table class="table is-fullwidth has-text-centered is-family-monospace" id="history">
                 <tbody>
                 <!-- Here will be rows with expressions and values from the history -->

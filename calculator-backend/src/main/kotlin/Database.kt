@@ -4,7 +4,6 @@ import com.github.heheteam.expr.Value
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.onFailure
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -70,6 +69,11 @@ class Database private constructor(private val path: Path, private val allEntrie
 
     fun getLatestItemsForHistory(count: Int): String {
         return Json.encodeToString(queryLastEntries(count).map { it.toSerializable() })
+    }
+
+    fun clearAllEntries(){
+        allEntries.clear()
+        Files.writeString(path, "[]", StandardOpenOption.TRUNCATE_EXISTING)
     }
 
     companion object {

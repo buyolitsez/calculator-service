@@ -13,6 +13,7 @@ import java.nio.file.Path
 
 const val computationRequest = "/calculator"
 const val historyRequest = "/history"
+const val clearHistoryRequest = "/clear/history"
 lateinit var database: Database
 
 fun Application.configureRouting(
@@ -57,6 +58,11 @@ fun Application.configureRouting(
 
         get (historyRequest) {
             call.respond(database.getLatestItemsForHistory(maxHistoryEntries))
+        }
+
+        post (clearHistoryRequest) {
+            database.clearAllEntries()
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
