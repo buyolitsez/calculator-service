@@ -31,7 +31,8 @@ function addToHistoryTable(exprString, value, ind = 0) {
     expr.setAttribute("data-expression", exprString)
     expr.innerText = (exprString + ' = ' + value)
         .replaceAll(/([\d)])([=*/+-])/g, "$1 $2 ")
-        .replaceAll("*", "×");
+        .replaceAll("*", "×")
+        .replaceAll("-", "–");
     expr.classList.add("expression");
     exprCell.appendChild(expr);
     expr.onclick = getFromHistoryTable;
