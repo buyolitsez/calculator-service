@@ -1,13 +1,15 @@
 const historyTable = document.getElementById("history")
 const clearHistoryButton = document.getElementById("clearHistoryButton")
 
+const ipAddress = "localhost"
+
 /**
  * adds all data from db to html table
  *
  * must be called only once: at the launch of website
  */
 function getHistory() {
-    fetch("http://localhost:8080/history")
+    fetch("http://" + ipAddress + ":8080/history")
         .then(response => {
             console.log(response);
             return response.json();
@@ -29,7 +31,7 @@ function addToHistoryTable(exprString, value, ind = 0) {
     const expr = document.createElement('span');
     expr.classList.add("is-clickable");
     expr.setAttribute("data-expression", exprString)
-    expr.innerText = (exprString + ' = ' + value)
+    expr.innerText = (exprString + ' = ' + roundNumber(value))
         .replaceAll(/([\d)])([=*/+-])/g, "$1 $2 ")
         .replaceAll("*", "×")
         .replaceAll("-", "–");
@@ -48,7 +50,7 @@ function getFromHistoryTable(e) {
 function clearHistory() {
     clearHistoryButton.classList.add("is-loading")
     clearHistoryButton.children[0].style.visibility = "hidden"
-    fetch("http://localhost:8080/clear/history", {
+    fetch("http://" + ipAddress + ":8080/clear/history", {
         method: 'POST'
     }).then(r => {
         if (r.ok) {

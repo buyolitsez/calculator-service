@@ -82,10 +82,18 @@ function resetSelectionColor() {
     input.classList.remove("error")
 }
 
+function roundNumber(number) {
+    if (Math.abs(number - Math.round(number)) < 1e-9) {
+        return Math.round(number)
+    } else {
+        return number.toFixed(8) * 1
+    }
+}
+
 function postExpression() {
     resultField.innerText = "******"
     resultField.classList.add("has-skeleton")
-    fetch("http://localhost:8080/calculator", {
+    fetch("http://" + ipAddress + ":8080/calculator", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -98,11 +106,7 @@ function postExpression() {
 
         if (!isNaN(result)) {
             resultField.classList.remove("has-text-danger")
-            if (Math.abs(result - Math.round(result)) < 1e-9) {
-                result = Math.round(result)
-            } else {
-                result = result.toFixed(8) * 1
-            }
+            result = roundNumber(result)
             resultField.innerText = "Result: " + result.toString()
             addToHistoryTable(input.value, result)
             return
